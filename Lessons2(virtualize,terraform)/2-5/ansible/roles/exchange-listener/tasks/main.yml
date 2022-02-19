@@ -1,0 +1,28 @@
+---
+- name: Synchronization
+  copy:
+      src: ./
+      dest: "{{ path }}/"
+      owner: root
+      group: root
+      mode: 0644
+  become: true
+
+- name: Configure docker-compose file
+  replace:
+    path="{{ path }}/docker-compose.yml"
+    regexp='{exchnage_listener_port}'
+    replace="{{ exchnage_listener_port }}"
+
+- name: Configure docker-compose file
+  replace:
+    path="{{ path }}/docker-compose.yml"
+    regexp='{redis_port}'
+    replace="{{ redis_port }}"
+
+- name: Pull all images in compose
+  command: docker-compose -f "{{ path }}/docker-compose.yml" pull
+
+- name: Up all services in compose
+  command: docker-compose -f "{{ path }}/docker-compose.yml" up -d
+

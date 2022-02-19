@@ -1,0 +1,27 @@
+version: "3.3"
+
+networks:
+  net:
+    driver: bridge
+
+services:
+  exchangelistener:
+    image: bpmonline/exchangelistener:0.8.72
+    restart: unless-stopped
+    ports:
+      - '{exchnage_listener_port}:80'
+    environment:
+      - ExchangeListenerRedisHost=redis:6379
+      - ExchangeListenerRedisDatabase=1
+      - PodName=ExchangeListener
+    networks:
+      - net
+
+  redis:
+    image: redis:5.0
+    restart: unless-stopped
+    ports:
+      - '{redis_port}:6379'
+    networks:
+      - net
+

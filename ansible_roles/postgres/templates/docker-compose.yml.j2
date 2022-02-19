@@ -1,0 +1,21 @@
+version: "3.3"
+
+networks:
+  net:
+    driver: bridge
+
+services:
+  postgresql:
+    restart: unless-stopped
+    image: postgres:{{version}}
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - '{{postgresql_data_path}}:/var/lib/postgresql/data'
+      - '{{postgresql_backup_path}}:/var/lib/postgresql/backups'
+    ports:
+      - '{{postgresql_port}}:5432'
+    networks:
+      - net
+
+

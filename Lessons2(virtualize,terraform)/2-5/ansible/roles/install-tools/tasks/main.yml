@@ -1,0 +1,17 @@
+---
+  - name: Install aptitude using apt
+    apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+  - name: Installing tools
+    package: >
+      package={{ item }}
+      state=present
+      update_cache=yes
+    with_items:
+      - ntp
+      - python
+      - tcpdump
+      - wget
+      - openssl
+      - curl
+      - git

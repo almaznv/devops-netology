@@ -1,0 +1,5 @@
+postgresql_port      : "5432"
+path                 : "/opt/postgres"
+postgresql_data_path : "/opt/postgres_data"
+postgresql_backup_path : "/opt/postgres_backup"
+version: "12.0"

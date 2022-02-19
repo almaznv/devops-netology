@@ -1,0 +1,4 @@
+port      : "3306"
+path      : "/opt/mysql"
+data_path : "/opt/mysql_data"
+conf_path : "/opt/mysql_conf"

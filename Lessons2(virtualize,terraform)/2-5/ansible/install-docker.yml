@@ -1,0 +1,25 @@
+---
+  - name: Install of Requrements Tools
+    hosts: nodes
+    become: yes
+    become_user: root
+    remote_user: ubuntu
+    roles:
+      - install-tools
+      - configure-hosts-file
+
+  - name: Install Docker Engine
+    hosts: nodes
+    become: yes
+    become_user: root
+    remote_user: ubuntu
+    roles:
+      - docker-installation
+
+  - name: Install Exchnage listener
+    hosts: nodes
+    become: yes
+    become_user: root
+    remote_user: ubuntu
+    roles:
+      - exchange-listener

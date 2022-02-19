@@ -1,0 +1,10 @@
+---
+  - name: Install of Requrements Tools
+    hosts: test
+    become: yes
+    become_user: root
+    remote_user: ops
+    roles:
+      - role: install-tools
+      - role: docker-installation
+      - role: mysql

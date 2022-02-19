@@ -1,0 +1,1 @@
+FROM bpmonline/exchangelistener:0.8.72

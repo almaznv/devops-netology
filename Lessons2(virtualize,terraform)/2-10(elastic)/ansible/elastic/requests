@@ -1,0 +1,8 @@
+PUT http://localhost:9200/_snapshot/netology_backup?verify=false
+
+{
+  "type": "fs",
+  "settings": {
+    "location": "/elastic/snapshot"
+  }
+}

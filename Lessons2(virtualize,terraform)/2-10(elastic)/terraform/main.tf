@@ -6,7 +6,7 @@ resource "yandex_compute_disk" "test_boot_disk" {
   zone     = "ru-central1-a"
   size     = 50
   folder_id   = data.yandex_resourcemanager_folder.default.folder_id
-  image_id = data.yandex_compute_image.ubuntu2004.image_id
+  snapshot_id = "fd8vv1oa8r48eh485r37"
 
 }
 
@@ -36,7 +36,7 @@ resource "yandex_compute_instance" "test" {
   network_interface {
     subnet_id = yandex_vpc_subnet.avagapov_test_a.id
     nat = true
-    security_group_ids = []
+    security_group_ids = []:
   }
 
   metadata = {

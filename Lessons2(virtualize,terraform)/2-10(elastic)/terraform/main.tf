@@ -36,7 +36,7 @@ resource "yandex_compute_instance" "test" {
   network_interface {
     subnet_id = yandex_vpc_subnet.avagapov_test_a.id
     nat = true
-    security_group_ids = []:
+    security_group_ids = []
   }
 
   metadata = {

@@ -1,0 +1,99 @@
+---
+- name: Install Clickhouse
+  hosts: clickhouse
+  tags:
+    - clickhouse
+  handlers:
+    - name: Start clickhouse service
+      become: true
+      ansible.builtin.service:
+        name: clickhouse-server
+        state: restarted
+  tasks:
+    - block:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.noarch.rpm"
+            dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
+          with_items: "{{ clickhouse_packages }}"
+      rescue:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+            dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
+    - name: Install clickhouse packages
+      become: true
+      ansible.builtin.yum:
+        name:
+          - clickhouse-common-static-{{ clickhouse_version }}.rpm
+          - clickhouse-client-{{ clickhouse_version }}.rpm
+          - clickhouse-server-{{ clickhouse_version }}.rpm
+      notify: Start clickhouse service
+    - name: Create database
+      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
+      register: create_db
+      failed_when: create_db.rc != 0 and create_db.rc !=82
+      changed_when: create_db.rc == 0
+
+- name: Install Vector
+  hosts: clickhouse
+  gather_facts: no
+  tags:
+    - vector
+  handlers:
+    - name: Start vector service
+      become: true
+      ansible.builtin.service:
+        name: vector
+        state: restarted
+  tasks:
+    - name: Get vector distrib
+      get_url:
+        url: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-x86_64-unknown-linux-musl.tar.gz"
+        dest: "/tmp/vector-{{ vector_version }}.tar.gz"
+
+    - name: Ensures directories exists
+      become: true
+      file: path={{ item }} state=directory
+      loop:
+        - '/tmp/vector-{{ vector_version }}'
+        - /etc/vector
+
+    - name: Unzip vector
+      become: true
+      unarchive:
+        remote_src: yes
+        src: '/tmp/vector-{{ vector_version }}.tar.gz'
+        dest: '/tmp/vector-{{ vector_version }}'
+        extra_opts: [--strip-components=2]
+      register: vector_unzip
+      when: not ansible_check_mode
+
+    - name: Ensures /var/lib/vector exists
+      become: true
+      file: path=/var/lib/vector state=directory
+
+    - name: Register in systemd
+      become: true
+      shell: |
+        cp -v  /tmp/vector-{{ vector_version }}/bin/vector /usr/bin/vector
+        cp -av /tmp/vector-{{ vector_version }}/etc/init.d/vector /etc/init.d
+        cp -av /tmp/vector-{{ vector_version }}/etc/systemd/vector.service /etc/systemd/system
+      when: vector_unzip.changed
+
+    - name: Configure vector in systemd
+      become: yes
+      lineinfile:
+        dest: /etc/systemd/system/vector.service
+        state: present
+        regexp: '^ExecStart=/usr/bin/vector'
+        line: 'ExecStart=/usr/bin/vector --config /etc/vector/vector.toml'
+
+    - name: Set config
+      become: true
+      template:
+        src: vector.toml.j2
+        dest: "/etc/vector/vector.toml"
+      notify: Start vector service
+
+

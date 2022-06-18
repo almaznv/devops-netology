@@ -1,0 +1,124 @@
+---
+- name: Install Elasticsearch
+  hosts: elasticsearch
+  tags:
+    - elasticsearch
+  handlers:
+    - name: restart Elasticsearch
+      become: true
+      service:
+        name: elasticsearch
+        state: restarted
+  tasks:
+    - name: "Download Elasticsearch's rpm to localhost"
+      get_url:
+        url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
+      register: download_elastic
+      until: download_elastic is succeeded
+      delegate_to: localhost
+    - name: "Copy to elastic server"
+      copy:
+        src: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
+    - name: Install Elasticsearch
+      become: true
+      yum:
+        name: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
+        state: present
+    - name: Configure Elasticsearch
+      become: true
+      template:
+        src: elasticsearch.yml.j2
+        dest: /etc/elasticsearch/elasticsearch.yml
+      notify: restart Elasticsearch
+
+- name: Install Kibana
+  hosts: kibana
+  tags:
+    - kibana
+  handlers:
+    - name: restart Kibana
+      become: true
+      service:
+        name: kibana
+        state: restarted
+  tasks:
+    - name: "Download Kibana's rpm"
+      get_url:
+        url: "https://artifacts.elastic.co/downloads/kibana/kibana-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+      register: download_kibana
+      until: download_kibana is succeeded
+      delegate_to: localhost
+    - name: "Copy to Kibana server"
+      copy:
+        src: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+    - name: Install Kibana
+      become: true
+      yum:
+        name: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+        state: present
+    - name: Configure Kibana
+      become: true
+      template:
+        src: kibana.yml.j2
+        dest: /etc/kibana/kibana.yml
+      notify: restart Kibana
+
+- name: Install Filebeat
+  hosts: app
+  tags:
+    - filebeat
+  handlers:
+    - name: restart Filebeat
+      become: true
+      service:
+        name: filebeat
+        state: restarted
+  tasks:
+    - name: "Download Filebeat's rpm"
+      get_url:
+        url: "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm"
+      register: download_filebeat
+      until: download_filebeat is succeeded
+      delegate_to: localhost
+    - name: "Copy to Filebeat server"
+      copy:
+        src: "/tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm"
+    - name: Install Filebeat
+      become: true
+      yum:
+        name: "/tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm"
+        state: present
+      notify: restart Filebeat
+    - name: Configure Filebeat System Module
+      become: true
+      template:
+        src: filebeat_system.yml.j2
+        dest: /etc/filebeat/modules.d/system.yml
+      notify: restart Filebeat
+    - name: Configure Filebeat
+      become: true
+      template:
+        src: filebeat.yml.j2
+        dest: /etc/filebeat/filebeat.yml
+      notify: restart Filebeat
+    - name: Setup filebeat
+      become: true
+      command:
+        cmd: filebeat modules enable system
+        chdir: /usr/share/filebeat/bin
+      register: filebeat_modules
+      changed_when: filebeat_modules.stdout != 'Module system is already enabled'
+    - name: Load dashboard
+      become: true
+      command:
+        cmd: filebeat setup
+        chdir: /usr/share/filebeat/bin
+      register: filebeat_setup
+      changed_when: false
+      until: filebeat_setup is succeeded

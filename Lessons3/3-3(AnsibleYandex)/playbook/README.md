@@ -9,7 +9,7 @@
 Elastic и Kibana конфигурируются стандартно.  
 Filebeat настроен на сбор информации с системного лога.
 
-Пример запуска : ansible-playbook -i inventory/prod.yml site.yml --tags='vector'  
+Пример запуска : ansible-playbook -i inventory/prod.yml site.yml --tags='filebeat'  
 
 Параметры: 
 * elk_stack_version - версия elk стека

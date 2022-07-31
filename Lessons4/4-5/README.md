@@ -29,6 +29,7 @@ storage-provisioner             1/1     Running   0          53s
 2. [Задача 2: Запуск Hello World](https://github.com/netology-code/devkub-homeworks/blob/main/12-kubernetes-01-intro.md#%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B0-2-%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA-hello-world)
 
 ```shell
+root@kuber:/opt/app# minikube start --vm-driver=none --apiserver-ips=62.84.121.110
 root@kuber:/opt/app# kubectl get services
 NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 hello-node   LoadBalancer   10.104.241.99   <pending>     8080:32119/TCP   15s

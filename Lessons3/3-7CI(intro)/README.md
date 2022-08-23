@@ -6,6 +6,9 @@
 1. Workflow для багов  
 ![img_1.png](img_1.png)
 
+[XML файл](Only%20for%20bug.xml)
 
 2. Workflow для других типов задач  
 ![img.png](img.png)
+
+[XML файл](Other%20workflow.xml)

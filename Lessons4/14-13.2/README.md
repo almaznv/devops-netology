@@ -3,7 +3,7 @@
 
 1. [Задание 1: подключить для тестового конфига общую папку](https://github.com/netology-code/devkub-homeworks/blob/main/13-kubernetes-config-02-mounts.md#%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B8%D1%82%D1%8C-%D0%B4%D0%BB%D1%8F-%D1%82%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%BE%D0%B3%D0%BE-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D0%B0-%D0%BE%D0%B1%D1%89%D1%83%D1%8E-%D0%BF%D0%B0%D0%BF%D0%BA%D1%83)
 
-Создаем деплоймент с фронтом и беком в одном поде (взято из предыдущего задания) с общим вольюмом:
+Создаем деплоймент с фронтом и беком в одном поде (взято из предыдущего задания 13.1) с общим вольюмом:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -60,7 +60,7 @@ spec:
 
 2. [Задание 2: подключить общую папку для прода](https://github.com/netology-code/devkub-homeworks/blob/main/13-kubernetes-config-02-mounts.md#%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B8%D1%82%D1%8C-%D0%BE%D0%B1%D1%89%D1%83%D1%8E-%D0%BF%D0%B0%D0%BF%D0%BA%D1%83-%D0%B4%D0%BB%D1%8F-%D0%BF%D1%80%D0%BE%D0%B4%D0%B0)
 
-Создаем деплоймент с фронтом и беком в отдельных деплойментах (взято из предыдущего задания) с общим вольюмом через nfs:
+Создаем деплоймент с фронтом и беком в отдельных деплойментах (взято из предыдущего задания 13.1) с общим вольюмом через nfs:
 ```yaml
 apiVersion: v1
 kind: PersistentVolume

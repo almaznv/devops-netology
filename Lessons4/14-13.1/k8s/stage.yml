@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stage-netology-app
+  name: stage-netology-app
+  namespace: netology
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stage-netology-app
+  template:
+    metadata:
+      labels:
+        app: stage-netology-app
+    spec:
+      imagePullSecrets:
+        - name: netologyregistry
+      containers:
+      - image: cr.yandex/crpaknp5iglnaki6hnq7/backend:latest
+        name: backend
+        ports:
+          - name: back
+            containerPort: 9000
+        env:
+          - name: DATABASE_URL
+            value: postgres://postgres:postgres@postgres.netology.svc.cluster.local:5432/news
+      - image: cr.yandex/crpaknp5iglnaki6hnq7/frontend:latest
+        name: frontend
+        ports:
+          - name: front
+            containerPort: 80
+        env:
+          - name: BASE_URL
+            value: "http://localhost:9000"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+          - name: POSTGRES_DB
+            value: "news"
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "postgres"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: postgres

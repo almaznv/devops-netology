@@ -1,7 +1,5 @@
-## [Домашнее задание к занятию "12.4 Развертывание кластера на собственных серверах, лекция 2"](https://github.com/netology-code/devkub-homeworks/blob/main/12-kubernetes-04-install-part-2.md)
-## 
 
-1. [Задание 1: Подготовить инвентарь kubespray](https://github.com/netology-code/devkub-homeworks/blob/main/12-kubernetes-04-install-part-2.md#%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-%D0%BF%D0%BE%D0%B4%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-%D0%B8%D0%BD%D0%B2%D0%B5%D0%BD%D1%82%D0%B0%D1%80%D1%8C-kubespray)  
+1. Подготовить инвентарь kubespray  
 a) Созданы: 1 control plain нода, 2 worker ноды в YC  
 b) Сгенерирован hosts.yml:  
 ```yaml
